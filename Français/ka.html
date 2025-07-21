@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Image Generator 🐱</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    img { max-width: 80%; margin-top: 20px; border-radius: 40px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    input { padding: 10px; width: 300px; border-radius: 30px; border: 1px solid #ccc; }
+    button { transition: 0.5s;padding: 10px 20px; border: none; background-color: #4caf50; color: white; border-radius: 20px; cursor: pointer; }
+    button:hover { background-color: #000000;padding: 15px;font-size: 15px; }
+  </style>
+</head>
+<body>
+  <h1>ESTIN IMAGIFY</h1>
+  <input type="text" id="prompt" placeholder="Entrr un texte ici:">
+  <br><br>
+  <button onclick="generateImage()">Generate </button>
+  <br>
+  <img id="output" src="" alt="here">
+  <script>
+    function generateImage() {
+      const prompt = document.getElementById("prompt").value;
+      const encodedPrompt = encodeURIComponent(prompt);
+      const imgUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}`;
+      document.getElementById("output").src = imgUrl;
+    }
+  </script>
+</body>
+</html>

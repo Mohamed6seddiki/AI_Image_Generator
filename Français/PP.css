@@ -1,0 +1,122 @@
+body {
+    background-color: #1d2023;
+    text-align: center;
+}
+h1 {
+    font-size: 90px;
+    font-family: "Lilita One", sans-serif;
+    font-weight: 400;
+    margin-top: 20vh;
+    -webkit-text-stroke: 4px rgb(173, 156, 255);
+}
+.EZ {
+    -webkit-text-stroke: 4px white;
+    margin-top: 14vh;
+}
+button {
+    font-size: 60px;
+    font-family: "Lilita One", sans-serif;
+    background-color: rgb(109, 0, 164);
+    color: white;
+    transition: 0.5s;
+    padding: 15px 30px;
+    margin: 10px;
+    border-radius: 40px 0 40px 0;
+    cursor: pointer;
+}
+button:hover{
+    background-color: rgb(255, 222, 222);
+    color: black;
+    transform: translateY(10px);
+    border-radius: 0px 40px 0px 40px;
+}
+#contact-btn:hover {
+    background-color: rgb(255, 222, 222);
+    color: black;
+    border-radius: 0px 40px 0px 40px;
+}
+#contact-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 50px;
+    padding: 10px 20px;
+    background-color: rgb(109, 0, 164);
+    color: white;
+    border-radius: 40px 0 40px 0;
+}
+#back-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    padding: 10px 20px;
+    background-color: rgb(255, 222, 222);
+    color: rgb(0, 0, 0);
+    border-radius: 20px 0 20px 0;
+}
+#back-btn:hover{
+    background-color: rgb(109, 0, 164);
+    color: white;
+    border-radius: 0px 20px 0px 20px;
+}
+.socials {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+.socials a {
+    font-size: 50px;
+    color: white;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 50%;
+    transition: 0.5s;
+}
+.socials img {
+    width: 50px;
+    height: 50px;
+    transition: 0.5s;
+}
+.socials a:hover img {
+    transform: scale(1.4);
+}
+.socials a.facebook:hover { background-color: #1877f2; }
+.socials a.instagram:hover { background-color: #a41aa8; }
+.socials a.whatsapp:hover { background-color: #25D366; }
+.socials a.gmail:hover { background-color: #ff7043; }
+.DWAYRA {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 500px;
+    background-color: #014145;
+    clip-path: ellipse(60% 100% at 50% 100%);
+    z-index: -1;
+}
+.screen-split {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+.left, .right {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+.left { background-image: url('199597333-illustration-futuriste-abstraite-conceptuelle-de-l-intelligence-artificielle-dans-une-image-féminine.jpg'); }
+.right { background-image: url('imgedirot.jpg'); }
+
+.left.visible, .right.visible {
+    opacity: 1;
+}

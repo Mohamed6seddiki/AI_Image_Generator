@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Principale Page</title>
+    <link rel="stylesheet" href="PP.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/yourFontAwesomeCode.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="screen-split">
+        <div class="left" onmouseover="showImage('left')" onmouseout="hideImage('left')"></div>
+        <div class="separator"></div>
+        <div class="right" onmouseover="showImage('right')" onmouseout="hideImage('right')"></div>
+    </div>
+    <h1>accueillir les clients</h1>
+    <h1 class="EZ">Comment pouvons-nous vous aider?</h1>
+    <button onmouseover="showImage('left')" onmouseout="hideImage('left')">AI Génerateur</button>
+    <button onmouseover="showImage('right')" onmouseout="hideImage('right')">Édition d'images</button>
+    <br><br>
+    <button id="contact-btn">Contactez-nous</button>
+    <button id="back-btn" style="display:none;">Retour</button>
+    <div class="socials" id="social-links" style="display: none;">
+        <a href="https://www.facebook.com/AbdeldjalilBelghoul" target="_blank" class="facebook">
+            <img src="facebook.png" alt="Facebook" />
+        </a>
+        <a href="https://www.instagram.com/fares-nazlo" target="_blank" class="instagram">
+            <img src="instagram.png" alt="Instagram" />
+        </a>
+        <a href="https://wa.me/213669022215" target="_blank" class="whatsapp">
+            <img src="whatsapp.png" alt="WhatsApp" />
+        </a>
+        <a href="mailto:hitlorealmania@gmail.com" class="gmail">
+            <img src="gmail.png" alt="Gmail" />
+        </a>
+    </div>
+    <div class="DWAYRA"></div>
+    <script src="PP.js"></script>
+</body>
+</html>
