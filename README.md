@@ -25,7 +25,7 @@ You can simply open any of the `.html` files directly in your web browser:
 
 ```bash
 # Example:
-double-click AI.html
+double-click PP.html
 ```
 
 ### Option 2: Using Node.js (optional, if dependencies exist)
