@@ -26,3 +26,45 @@ You can simply open any of the `.html` files directly in your web browser:
 ```bash
 # Example:
 double-click AI.html
+```
+
+### Option 2: Using Node.js (optional, if dependencies exist)
+
+```bash
+npm install
+npm start  # Only if a start script is defined
+```
+
+> Note: `package.json` is included, so this option is available if the project uses packages like express, live-server, etc.
+
+---
+
+## 🖼️ Visual Assets
+
+The project includes multiple images such as:
+
+- `ANIS1.jpg`, `imgedirot.jpg` – For design/demo purposes
+- `facebook.png`, `instagram.png`, `gmail.png` – Social media icons
+
+Make sure these images stay in the same directory to avoid broken links in the web pages.
+
+---
+
+## 🧠 Purpose
+
+This project was created for educational and presentation purposes. It demonstrates how AI-related tools can be embedded into clean web UIs, and how to structure basic web projects with multiple features.
+
+---
+
+## 👥 Credits
+
+Developed by Mohamed Seddiki and friends  
+🎓 Academic/Demo Use Only
+
+---
+
+## 📄 License
+
+This project is intended for non-commercial, educational use only. All image rights belong to their respective owners.
+
+---
