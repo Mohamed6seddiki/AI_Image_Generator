@@ -59,7 +59,16 @@
                     div.innerHTML = '';
                     div.appendChild(img);
                 });
-        }
+            }else if (prompt === "mili") {
+                divs.forEach((div, index) => {
+                    const img = new Image();
+                    img.src = `mili${index + 1}.CR2`;
+                    img.width = 256;
+                    img.height = 256;
+                    div.innerHTML = '';
+                    div.appendChild(img);
+                });
+            }    
     }
     </script>
 </body>
