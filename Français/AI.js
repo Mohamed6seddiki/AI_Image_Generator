@@ -14,7 +14,7 @@ async function generateImage() {
   ];
 
   divs.forEach(div => {
-    div.innerHTML = '<div style="color:#666; padding:20px;">⏳ جاري البحث...</div>';
+    div.innerHTML = '<div style="color:#666; padding:20px;">⏳ جاري التوليد...</div>';
   });
 
   // الصور المحلية
@@ -36,64 +36,107 @@ async function generateImage() {
     return;
   }
 
-  // ترجمة تلقائية
+  // ترجمة الكلمات العربية الشائعة
   const translations = {
-    'قط': 'cat', 'كلب': 'dog', 'قلم': 'pen', 'سيارة': 'car',
-    'منزل': 'house', 'شجرة': 'tree', 'زهرة': 'flower',
-    'بحر': 'ocean', 'جبل': 'mountain', 'سماء': 'sky'
+    'قط': 'cat', 'قطة': 'cat', 'قطط': 'cats',
+    'كلب': 'dog', 'كلاب': 'dogs',
+    'قلم': 'pen', 'اقلام': 'pens',
+    'سيارة': 'car', 'سيارات': 'cars',
+    'منزل': 'house', 'بيت': 'house',
+    'شجرة': 'tree', 'اشجار': 'trees',
+    'زهرة': 'flower', 'زهور': 'flowers',
+    'بحر': 'ocean', 'محيط': 'ocean',
+    'جبل': 'mountain', 'جبال': 'mountains',
+    'سماء': 'sky',
+    'طائر': 'bird', 'طيور': 'birds',
+    'طعام': 'food',
+    'غروب': 'sunset',
+    'شروق': 'sunrise',
+    'غابة': 'forest',
+    'نهر': 'river',
+    'صحراء': 'desert'
   };
   
-  let searchQuery = rawValue;
+  let prompt = rawValue;
   Object.keys(translations).forEach(ar => {
-    searchQuery = searchQuery.replace(new RegExp(ar, 'gi'), translations[ar]);
+    prompt = prompt.replace(new RegExp(ar, 'gi'), translations[ar]);
   });
 
-  // استخدام Pexels API
-  try {
-    const response = await fetch(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(searchQuery)}&per_page=15`,
-      {
-        headers: {
-          'Authorization': 'wl7F1spCm4DqV2lejv45Qc0wO4EIPVlcfFUmsocxAYtnw93bkbpph88y' // احصل عليه من pexels.com/api
-        }
-      }
-    );
+  // تحسين الـ Prompt
+  const enhancedPrompt = `${prompt}, high quality, detailed, professional photography`;
 
-    const data = await response.json();
-    
-    if (data.photos && data.photos.length > 0) {
-      divs.forEach((div, i) => {
-        const photo = data.photos[i] || data.photos[0];
-        const img = new Image();
-        img.style.cssText = "width:100%; border-radius:8px; opacity:0; transition:opacity 0.5s";
-        img.src = photo.src.large;
-        
-        img.onload = () => {
-          div.innerHTML = "";
-          div.appendChild(img);
-          setTimeout(() => img.style.opacity = "1", 50);
-        };
-      });
-    } else {
-      useFallback(divs, searchQuery);
+  // استخدام APIs موثوقة بالترتيب
+  const APIs = [
+    // 1. Pollinations (مع إعدادات محسّنة)
+    {
+      name: 'Pollinations',
+      getUrl: (prompt, seed) => 
+        `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${seed}&width=512&height=512&nologo=true`
+    },
+    // 2. Replicate Proxy
+    {
+      name: 'Craiyon',
+      getUrl: (prompt, seed) => 
+        `https://api.craiyon.com/draw?prompt=${encodeURIComponent(prompt)}&version=35s5hfwn9n78gb06&token=${seed}`
+    },
+    // 3. DreamStudio-like APIs
+    {
+      name: 'Prodia',
+      getUrl: (prompt, seed) => 
+        `https://images.prodia.xyz/generate?prompt=${encodeURIComponent(prompt)}&seed=${seed}&steps=20&cfg_scale=7`
     }
-  } catch (error) {
-    useFallback(divs, searchQuery);
-  }
-}
+  ];
 
-function useFallback(divs, query) {
-  divs.forEach((div, i) => {
-    const seed = `${query}-${i}`;
-    const img = new Image();
-    img.style.cssText = "width:100%; border-radius:8px; opacity:0; transition:opacity 0.5s";
-    img.src = `https://picsum.photos/seed/${encodeURIComponent(seed)}/600/600`;
-    
-    img.onload = () => {
-      div.innerHTML = "";
-      div.appendChild(img);
-      setTimeout(() => img.style.opacity = "1", 50);
-    };
+  // توليد 3 صور
+  divs.forEach(async (div, i) => {
+    const seed = Date.now() + i * 1000;
+    let success = false;
+
+    // جرب كل API بالترتيب
+    for (let api of APIs) {
+      if (success) break;
+
+      try {
+        console.log(`Trying ${api.name} for image ${i+1}...`);
+        const url = api.getUrl(enhancedPrompt, seed);
+        
+        const response = await fetch(url);
+        
+        if (response.ok) {
+          const blob = await response.blob();
+          
+          // تحقق من أن الملف صورة فعلاً
+          if (blob.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.style.cssText = "width:100%; border-radius:8px; opacity:0; transition:opacity 0.5s";
+            img.src = URL.createObjectURL(blob);
+            
+            img.onload = () => {
+              div.innerHTML = "";
+              div.appendChild(img);
+              setTimeout(() => img.style.opacity = "1", 50);
+            };
+            
+            success = true;
+            console.log(`✅ ${api.name} succeeded for image ${i+1}`);
+            break;
+          }
+        }
+      } catch (error) {
+        console.log(`❌ ${api.name} failed:`, error.message);
+        continue;
+      }
+    }
+
+    // إذا فشلت كل APIs
+    if (!success) {
+      div.innerHTML = `
+        <div style="color:orange; padding:20px; text-align:center;">
+          ⚠️ جرب وصفاً بالإنجليزية<br>
+          <small>مثال: "cat sitting on a table"</small>
+        </div>
+      `;
+    }
   });
 }
 
