@@ -12,12 +12,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     contactBtn.addEventListener("click", function () {
         contactBtn.style.display = "none";
-        socialLinks.style.display = "flex";
+        socialLinks.classList.add("show");
         backBtn.style.display = "block";
     });
     backBtn.addEventListener("click", function () {
         contactBtn.style.display = "block";
-        socialLinks.style.display = "none";
+        socialLinks.classList.remove("show");
         backBtn.style.display = "none";
     });
 });
