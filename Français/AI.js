@@ -1,9 +1,9 @@
 async function generateImage() {
   const input = document.getElementById("input");
-  const rawValue = input.value.trim();
+  let rawValue = input.value.trim();
   
   if (!rawValue) {
-    alert("⚠️ الرجاء كتابة وصف للصورة");
+    alert("⚠️ اكتب وصف الصورة");
     return;
   }
 
@@ -14,7 +14,7 @@ async function generateImage() {
   ];
 
   divs.forEach(div => {
-    div.innerHTML = '<div style="color:#666; padding:20px;">⏳ جاري إنشاء الصورة...</div>';
+    div.innerHTML = '<div style="color:#666; padding:20px;">⏳ جاري التوليد...</div>';
   });
 
   // الصور المحلية
@@ -24,83 +24,72 @@ async function generateImage() {
   if (localImages[value]) {
     divs.forEach((div, i) => {
       const img = new Image();
-      img.style.cssText = "width:100%; opacity:0; transition:opacity 0.5s; border-radius:8px;";
+      img.style.cssText = "width:100%; border-radius:8px; opacity:0; transition:opacity 0.5s";
       img.src = `${localImages[value]}${i + 1}.jpg`;
       img.onload = () => {
         div.innerHTML = "";
         div.appendChild(img);
-        setTimeout(() => img.style.opacity = "1", 10);
+        img.style.opacity = "1";
       };
-      img.onerror = () => {
-        div.innerHTML = '<div style="color:red;">❌ الصورة غير موجودة</div>';
-      };
+      img.onerror = () => div.innerHTML = "❌ غير موجودة";
     });
     return;
   }
 
-  // توليد صور AI باستخدام APIs موثوقة
-  divs.forEach(async (div, i) => {
-    try {
-      // استخدام Hugging Face Inference API (مجاني ودقيق)
-      const response = await fetch("https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          inputs: rawValue,
-          parameters: {
-            negative_prompt: "blurry, bad quality, distorted",
-            num_inference_steps: 30,
-            guidance_scale: 7.5,
-            width: 512,
-            height: 512,
-            seed: Date.now() + i * 1000
-          }
-        })
-      });
+  // تحسين الـ Prompt تلقائياً
+  const improvePrompt = (text) => {
+    // إضافة كلمات مفتاحية لتحسين الدقة
+    const qualityWords = "high quality, detailed, 4k, professional";
+    
+    // ترجمة بعض الكلمات العربية الشائعة
+    const translations = {
+      'قط': 'cat',
+      'كلب': 'dog', 
+      'قلم': 'pen',
+      'سيارة': 'car',
+      'منزل': 'house',
+      'شجرة': 'tree',
+      'زهرة': 'flower',
+      'بحر': 'ocean',
+      'جبل': 'mountain',
+      'سماء': 'sky'
+    };
+    
+    let improved = text;
+    Object.keys(translations).forEach(ar => {
+      improved = improved.replace(new RegExp(ar, 'gi'), translations[ar]);
+    });
+    
+    return `${improved}, ${qualityWords}`;
+  };
 
-      if (!response.ok) {
-        throw new Error('API Error');
-      }
-
-      const blob = await response.blob();
-      const img = new Image();
-      img.style.cssText = "width:100%; opacity:0; transition:opacity 0.5s; border-radius:8px;";
-      img.src = URL.createObjectURL(blob);
-      
-      img.onload = () => {
-        div.innerHTML = "";
-        div.appendChild(img);
-        setTimeout(() => img.style.opacity = "1", 10);
-      };
-
-    } catch (error) {
-      console.error('Error:', error);
-      
-      // Fallback: استخدام Pollinations مع إعدادات محسّنة
-      const seed = Date.now() + i * 1000;
-      const enhancedPrompt = `${rawValue}, high quality, detailed, photorealistic`;
-      const img = new Image();
-      img.style.cssText = "width:100%; opacity:0; transition:opacity 0.5s; border-radius:8px;";
-      
-      // استخدام model flux للدقة الأعلى
-      img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=512&height=512&seed=${seed}&model=flux&enhance=true&nologo=true`;
-      
-      img.onload = () => {
-        div.innerHTML = "";
-        div.appendChild(img);
-        setTimeout(() => img.style.opacity = "1", 10);
-      };
-      
-      img.onerror = () => {
-        div.innerHTML = '<div style="color:orange;">⚠️ فشل التحميل</div>';
-      };
-    }
+  // توليد الصور
+  divs.forEach((div, i) => {
+    const seed = Date.now() + i * 2000;
+    const enhancedPrompt = improvePrompt(rawValue);
+    
+    const img = new Image();
+    img.style.cssText = "width:100%; border-radius:8px; opacity:0; transition:opacity 0.5s";
+    
+    // استخدام Pollinations مع التحسينات
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?seed=${seed}&width=768&height=768&model=flux&enhance=true&nologo=true`;
+    
+    console.log(`Generated URL ${i+1}:`, url); // للتشخيص
+    
+    img.onload = () => {
+      div.innerHTML = "";
+      div.appendChild(img);
+      setTimeout(() => img.style.opacity = "1", 50);
+    };
+    
+    img.onerror = () => {
+      div.innerHTML = '<div style="color:red;">❌ خطأ في التحميل</div>';
+    };
+    
+    img.src = url;
   });
 }
 
-// ربط Enter
 document.getElementById("input")?.addEventListener("keypress", (e) => {
   if (e.key === "Enter") generateImage();
 });
