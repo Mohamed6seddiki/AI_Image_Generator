@@ -29,30 +29,19 @@ async function generateImage() {
       img.onload = () => {
         div.innerHTML = "";
         div.appendChild(img);
-        img.style.opacity = "1";
+        setTimeout(() => img.style.opacity = "1", 10);
       };
       img.onerror = () => div.innerHTML = "❌ غير موجودة";
     });
     return;
   }
 
-  // تحسين الـ Prompt تلقائياً
+  // تحسين Prompt
   const improvePrompt = (text) => {
-    // إضافة كلمات مفتاحية لتحسين الدقة
-    const qualityWords = "high quality, detailed, 4k, professional";
-    
-    // ترجمة بعض الكلمات العربية الشائعة
     const translations = {
-      'قط': 'cat',
-      'كلب': 'dog', 
-      'قلم': 'pen',
-      'سيارة': 'car',
-      'منزل': 'house',
-      'شجرة': 'tree',
-      'زهرة': 'flower',
-      'بحر': 'ocean',
-      'جبل': 'mountain',
-      'سماء': 'sky'
+      'قط': 'cat', 'كلب': 'dog', 'قلم': 'pen', 'سيارة': 'car',
+      'منزل': 'house', 'شجرة': 'tree', 'زهرة': 'flower',
+      'بحر': 'ocean', 'جبل': 'mountain', 'سماء': 'sky'
     };
     
     let improved = text;
@@ -60,34 +49,35 @@ async function generateImage() {
       improved = improved.replace(new RegExp(ar, 'gi'), translations[ar]);
     });
     
-    return `${improved}, ${qualityWords}`;
+    return `${improved}, high quality, detailed, professional`;
   };
 
-  // توليد الصور
-  divs.forEach((div, i) => {
-    const seed = Date.now() + i * 2000;
+  // توليد الصور بطريقة أفضل
+  for (let i = 0; i < divs.length; i++) {
+    const seed = Date.now() + i * 3000;
     const enhancedPrompt = improvePrompt(rawValue);
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?seed=${seed}&width=512&height=512&nologo=true`;
     
-    const img = new Image();
-    img.style.cssText = "width:100%; border-radius:8px; opacity:0; transition:opacity 0.5s";
-    
-    // استخدام Pollinations مع التحسينات
-    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?seed=${seed}&width=768&height=768&model=flux&enhance=true&nologo=true`;
-    
-    console.log(`Generated URL ${i+1}:`, url); // للتشخيص
-    
-    img.onload = () => {
-      div.innerHTML = "";
-      div.appendChild(img);
-      setTimeout(() => img.style.opacity = "1", 50);
-    };
-    
-    img.onerror = () => {
-      div.innerHTML = '<div style="color:red;">❌ خطأ في التحميل</div>';
-    };
-    
-    img.src = url;
-  });
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to load');
+      
+      const blob = await response.blob();
+      const img = document.createElement('img');
+      img.style.cssText = "width:100%; border-radius:8px; opacity:0; transition:opacity 0.5s";
+      img.src = URL.createObjectURL(blob);
+      
+      img.onload = () => {
+        divs[i].innerHTML = "";
+        divs[i].appendChild(img);
+        setTimeout(() => img.style.opacity = "1", 50);
+      };
+      
+    } catch (error) {
+      console.error('Error:', error);
+      divs[i].innerHTML = '<div style="color:red;">❌ خطأ في التحميل</div>';
+    }
+  }
 }
 
 document.getElementById("input")?.addEventListener("keypress", (e) => {
