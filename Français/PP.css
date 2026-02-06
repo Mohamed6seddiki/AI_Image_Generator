@@ -4,9 +4,6 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     overflow-x: hidden;
 }
 
@@ -14,7 +11,7 @@ body {
     position: relative;
     z-index: 1;
     padding: 20px;
-    margin-top: 5vh;
+    padding-top: 10vh;
 }
 
 h1 {
@@ -52,6 +49,7 @@ h1 {
     cursor: pointer;
     border: none;
     min-width: 400px;
+    margin: 10px;
 }
 
 .main-btn:hover {
@@ -62,17 +60,18 @@ h1 {
 }
 
 .contact-section {
-    margin-top: 40px;
-    padding: 20px;
+    margin-top: 60px;
+    padding: 30px;
     position: relative;
+    min-height: 200px;
 }
 
-#contact-btn, #back-btn {
+#contact-btn {
     font-size: 50px;
     font-family: "Lilita One", sans-serif;
     background-color: rgb(109, 0, 164);
     color: white;
-    transition: 0.5s;
+    transition: all 0.5s ease;
     padding: 15px 30px;
     border-radius: 40px 0 40px 0;
     cursor: pointer;
@@ -80,6 +79,14 @@ h1 {
     margin: 20px auto;
     display: block;
     min-width: 350px;
+    opacity: 1;
+    visibility: visible;
+}
+
+#contact-btn.hidden {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
 }
 
 #contact-btn:hover {
@@ -90,12 +97,24 @@ h1 {
 }
 
 #back-btn {
+    font-size: 40px;
+    font-family: "Lilita One", sans-serif;
     background-color: rgb(255, 222, 222);
     color: rgb(0, 0, 0);
+    transition: all 0.5s ease;
+    padding: 12px 25px;
     border-radius: 20px 0 20px 0;
-    font-size: 40px;
-    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    margin: 20px auto;
+    display: none;
     min-width: 250px;
+}
+
+#back-btn.visible {
+    display: block;
+    opacity: 1;
+    visibility: visible;
 }
 
 #back-btn:hover {
@@ -105,55 +124,69 @@ h1 {
     transform: translateY(5px);
 }
 
+.socials-container {
+    margin-top: 40px;
+}
+
 .socials {
-    margin: 40px auto;
-    display: flex;
+    display: none;
     justify-content: center;
     gap: 40px;
     flex-wrap: wrap;
     max-width: 800px;
+    margin: 0 auto;
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
-.socials a {
+.socials.visible {
+    display: flex;
+    opacity: 1;
+}
+
+.social-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     background-color: #333;
     border-radius: 50%;
-    transition: 0.5s;
+    transition: all 0.3s ease;
     text-decoration: none;
+    position: relative;
+    overflow: hidden;
 }
 
-.socials img {
+.social-link img {
     width: 50px;
     height: 50px;
-    transition: 0.5s;
+    transition: transform 0.3s ease;
     object-fit: contain;
 }
 
-.socials a:hover {
-    transform: translateY(-5px);
+.social-link:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
-.socials a:hover img {
+.social-link:hover img {
     transform: scale(1.2);
 }
 
-.socials a.facebook:hover { 
+.social-link.facebook:hover { 
     background-color: #1877f2; 
 }
 
-.socials a.instagram:hover { 
-    background-color: #a41aa8; 
+.social-link.instagram:hover { 
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
 }
 
-.socials a.whatsapp:hover { 
+.social-link.whatsapp:hover { 
     background-color: #25D366; 
 }
 
-.socials a.gmail:hover { 
+.social-link.gmail:hover { 
     background-color: #ff7043; 
 }
 
@@ -204,7 +237,28 @@ h1 {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Media Queries للشاشات الصغيرة */
+/* Animation for social icons */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.socials.visible .social-link {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.socials.visible .social-link:nth-child(1) { animation-delay: 0.1s; }
+.socials.visible .social-link:nth-child(2) { animation-delay: 0.2s; }
+.socials.visible .social-link:nth-child(3) { animation-delay: 0.3s; }
+.socials.visible .social-link:nth-child(4) { animation-delay: 0.4s; }
+
+/* Media Queries */
 @media (max-width: 1200px) {
     h1 {
         font-size: 70px;
@@ -226,7 +280,7 @@ h1 {
     h1 {
         font-size: 50px;
         -webkit-text-stroke: 2px;
-        margin-top: 10vh;
+        margin-top: 5vh;
     }
     
     .EZ {
@@ -239,6 +293,7 @@ h1 {
         flex-direction: column;
         align-items: center;
         gap: 30px;
+        margin-bottom: 50px;
     }
     
     .main-btn {
@@ -254,16 +309,16 @@ h1 {
     }
     
     .socials {
-        gap: 20px;
+        gap: 25px;
     }
     
-    .socials a {
-        width: 60px;
-        height: 60px;
+    .social-link {
+        width: 70px;
+        height: 70px;
     }
     
-    .socials img {
-        width: 35px;
-        height: 35px;
+    .social-link img {
+        width: 40px;
+        height: 40px;
     }
 }
