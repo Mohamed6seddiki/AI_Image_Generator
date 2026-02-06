@@ -1,158 +1,112 @@
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
     background-color: #1d2023;
     text-align: center;
-    min-height: 100vh;
-    font-family: "Lilita One", sans-serif;
 }
-
-.content-container {
-    padding: 20px;
-    position: relative;
-    z-index: 2;
-}
-
 h1 {
     font-size: 90px;
+    font-family: "Lilita One", sans-serif;
     font-weight: 400;
-    margin: 30px 0;
+    margin-top: 20vh;
     -webkit-text-stroke: 4px rgb(173, 156, 255);
-    color: transparent;
 }
-
 .EZ {
     -webkit-text-stroke: 4px white;
-    margin-bottom: 60px;
+    margin-top: 14vh;
 }
-
-.main-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    margin: 50px 0;
-    flex-wrap: wrap;
-}
-
-.main-btn {
+button {
     font-size: 60px;
+    font-family: "Lilita One", sans-serif;
     background-color: rgb(109, 0, 164);
     color: white;
-    padding: 20px 40px;
+    transition: 0.5s;
+    padding: 15px 30px;
+    margin: 10px;
     border-radius: 40px 0 40px 0;
     cursor: pointer;
-    border: none;
-    transition: all 0.3s ease;
 }
-
-.main-btn:hover {
+button:hover{
     background-color: rgb(255, 222, 222);
     color: black;
-    transform: translateY(5px);
+    transform: translateY(10px);
     border-radius: 0px 40px 0px 40px;
 }
-
-.contact-section {
-    margin-top: 80px;
-    padding: 20px;
-}
-
-#contact-btn, #back-btn {
-    font-size: 50px;
-    background-color: rgb(109, 0, 164);
-    color: white;
-    padding: 15px 30px;
-    border-radius: 40px 0 40px 0;
-    cursor: pointer;
-    border: none;
-    margin: 20px auto;
-    display: block;
-    transition: all 0.3s ease;
-}
-
 #contact-btn:hover {
     background-color: rgb(255, 222, 222);
     color: black;
     border-radius: 0px 40px 0px 40px;
 }
-
+#contact-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 50px;
+    padding: 10px 20px;
+    background-color: rgb(109, 0, 164);
+    color: white;
+    border-radius: 40px 0 40px 0;
+}
 #back-btn {
-    background-color: rgb(255, 222, 222);
-    color: black;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     font-size: 40px;
     padding: 10px 20px;
+    background-color: rgb(255, 222, 222);
+    color: rgb(0, 0, 0);
     border-radius: 20px 0 20px 0;
 }
-
-#back-btn:hover {
+#back-btn:hover{
     background-color: rgb(109, 0, 164);
     color: white;
     border-radius: 0px 20px 0px 20px;
 }
-
-/* الروابط الاجتماعية */
 .socials {
+    margin-top: 20px;
     display: flex;
     justify-content: center;
     gap: 30px;
-    margin: 40px auto;
-    max-width: 800px;
-    flex-wrap: wrap;
 }
-
-.social-link {
-    display: inline-block;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
+.socials a {
+    font-size: 50px;
+    color: white;
     background-color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
+    padding: 20px;
+    border-radius: 50%;
+    transition: 0.5s;
 }
-
-.social-link img {
-    width: 40px;
-    height: 40px;
+.socials img {
+    width: 50px;
+    height: 50px;
+    transition: 0.5s;
 }
-
-.social-link:hover {
-    transform: scale(1.1);
+.socials a:hover img {
+    transform: scale(1.4);
 }
-
-.social-link:nth-child(1):hover { background-color: #1877f2; }
-.social-link:nth-child(2):hover { background-color: #e4405f; }
-.social-link:nth-child(3):hover { background-color: #25D366; }
-.social-link:nth-child(4):hover { background-color: #EA4335; }
-
-/* الخلفيات */
+.socials a.facebook:hover { background-color: #1877f2; }
+.socials a.instagram:hover { background-color: #a41aa8; }
+.socials a.whatsapp:hover { background-color: #25D366; }
+.socials a.gmail:hover { background-color: #ff7043; }
 .DWAYRA {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 400px;
+    height: 500px;
     background-color: #014145;
-    clip-path: ellipse(70% 100% at 50% 100%);
-    z-index: 1;
+    clip-path: ellipse(60% 100% at 50% 100%);
+    z-index: -1;
 }
-
 .screen-split {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    z-index: 0;
+    z-index: -2;
 }
-
 .left, .right {
     flex: 1;
     background-size: cover;
@@ -160,20 +114,9 @@ h1 {
     opacity: 0;
     transition: opacity 0.5s ease;
 }
+.left { background-image: url('199597333-illustration-futuriste-abstraite-conceptuelle-de-l-intelligence-artificielle-dans-une-image-féminine.jpg'); }
+.right { background-image: url('imgedirot.jpg'); }
 
-.left { 
-    background-image: url('199597333-illustration-futuriste-abstraite-conceptuelle-de-l-intelligence-artificielle-dans-une-image-féminine.jpg'); 
-}
-
-.right { 
-    background-image: url('imgedirot.jpg'); 
-}
-
-.left.active, .right.active {
-    opacity: 0.3;
-}
-
-.separator {
-    width: 2px;
-    background: rgba(255,255,255,0.1);
+.left.visible, .right.visible {
+    opacity: 1;
 }
