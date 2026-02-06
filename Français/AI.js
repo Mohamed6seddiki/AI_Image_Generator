@@ -14,7 +14,7 @@ async function generateImage() {
   ];
 
   divs.forEach(div => {
-    div.innerHTML = '<div style="color:#666; padding:20px;">⏳ جاري التوليد...</div>';
+    div.innerHTML = '<div style="color:#666; padding:20px;">⏳ جاري البحث...</div>';
   });
 
   // الصور المحلية
@@ -29,50 +29,75 @@ async function generateImage() {
       img.onload = () => {
         div.innerHTML = "";
         div.appendChild(img);
-        img.style.opacity = "1";
+        setTimeout(() => img.style.opacity = "1", 10);
       };
       img.onerror = () => div.innerHTML = "❌ غير موجودة";
     });
     return;
   }
 
-  // تحسين الـ Prompt تلقائياً
-  const improvePrompt = (text) => {
-    const qualityWords = "high quality, detailed, 4k, professional";
-    
-    const translations = {
-      'قط': 'cat',
-      'كلب': 'dog', 
-      'قلم': 'pen',
-      'سيارة': 'car',
-      'منزل': 'house',
-      'شجرة': 'tree',
-      'زهرة': 'flower',
-      'بحر': 'ocean',
-      'جبل': 'mountain',
-      'سماء': 'sky'
-    };
-    
-    let improved = text;
-    Object.keys(translations).forEach(ar => {
-      improved = improved.replace(new RegExp(ar, 'gi'), translations[ar]);
-    });
-    
-    return `${improved}, ${qualityWords}`;
+  // ترجمة الكلمات العربية
+  const translations = {
+    'قط': 'cat', 'كلب': 'dog', 'قلم': 'pen', 'سيارة': 'car',
+    'منزل': 'house', 'شجرة': 'tree', 'زهرة': 'flower',
+    'بحر': 'ocean', 'جبل': 'mountain', 'سماء': 'sky',
+    'طائر': 'bird', 'طعام': 'food', 'غروب': 'sunset'
   };
+  
+  let searchQuery = rawValue;
+  Object.keys(translations).forEach(ar => {
+    searchQuery = searchQuery.replace(new RegExp(ar, 'gi'), translations[ar]);
+  });
 
-  // توليد الصور
-  divs.forEach((div, i) => {
-    const seed = Date.now() + i * 2000;
-    const enhancedPrompt = improvePrompt(rawValue);
+  // جلب الصور من Unsplash
+  try {
+    const response = await fetch(
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(searchQuery)}&per_page=30&client_id=your_access_key`
+    );
     
+    // إذا فشل Unsplash، استخدم Picsum كبديل
+    if (!response.ok) {
+      throw new Error('Unsplash failed');
+    }
+
+    const data = await response.json();
+    
+    if (data.results && data.results.length > 0) {
+      divs.forEach((div, i) => {
+        const randomIndex = Math.floor(Math.random() * data.results.length);
+        const imageUrl = data.results[randomIndex].urls.regular;
+        
+        const img = new Image();
+        img.style.cssText = "width:100%; border-radius:8px; opacity:0; transition:opacity 0.5s";
+        img.src = imageUrl;
+        
+        img.onload = () => {
+          div.innerHTML = "";
+          div.appendChild(img);
+          setTimeout(() => img.style.opacity = "1", 50);
+        };
+        
+        img.onerror = () => {
+          div.innerHTML = '<div style="color:red;">❌ خطأ</div>';
+        };
+      });
+    } else {
+      throw new Error('No results');
+    }
+    
+  } catch (error) {
+    console.log('Using fallback...');
+    useFallbackImages(divs, searchQuery);
+  }
+}
+
+// الحل البديل: Picsum (يعمل دائماً)
+function useFallbackImages(divs, query) {
+  divs.forEach((div, i) => {
+    const seed = query + i;
     const img = new Image();
     img.style.cssText = "width:100%; border-radius:8px; opacity:0; transition:opacity 0.5s";
-    
-    // استخدام Pollinations مع التحسينات
-    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?seed=${seed}&width=768&height=768&model=flux&enhance=true&nologo=true`;
-    
-    console.log(`Generated URL ${i+1}:`, url); // ✅ تم التصحيح
+    img.src = `https://picsum.photos/seed/${encodeURIComponent(seed)}/600/600`;
     
     img.onload = () => {
       div.innerHTML = "";
@@ -83,8 +108,6 @@ async function generateImage() {
     img.onerror = () => {
       div.innerHTML = '<div style="color:red;">❌ خطأ في التحميل</div>';
     };
-    
-    img.src = url;
   });
 }
 
