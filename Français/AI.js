@@ -48,71 +48,44 @@ async function generateImage() {
     prompt = prompt.replace(new RegExp(ar, 'gi'), translations[ar]);
   });
 
-  const enhancedPrompt = `${prompt}, high quality, detailed`;
-
-  // جرب عدة روابط Pollinations مختلفة
-  const pollinationsURLs = [
-    // الرابط الجديد 2025
-    (p, s) => `https://pollinations.ai/p/${encodeURIComponent(p)}?seed=${s}&width=512&height=512`,
-    
-    // الرابط القديم
-    (p, s) => `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?seed=${s}&width=512&height=512&nologo=true`,
-    
-    // بدون معاملات
-    (p, s) => `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}`,
-    
-    // مع model flux
-    (p, s) => `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?model=flux&seed=${s}`
-  ];
-
-  // جرب كل صورة
+  // استخدام Hugging Face Inference API (مجاني بدون تسجيل)
   for (let i = 0; i < divs.length; i++) {
-    const seed = Date.now() + i * 2000;
-    let loaded = false;
+    try {
+      const response = await fetch(
+        "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            inputs: prompt,
+            parameters: {
+              num_inference_steps: 4
+            }
+          })
+        }
+      );
 
-    // جرب كل رابط بالترتيب
-    for (let urlFunc of pollinationsURLs) {
-      if (loaded) break;
-      
-      const url = urlFunc(enhancedPrompt, seed);
-      
-      try {
+      if (response.ok) {
+        const blob = await response.blob();
         const img = new Image();
         img.style.cssText = "width:100%; opacity:0; transition:opacity 0.5s; border-radius:8px;";
+        img.src = URL.createObjectURL(blob);
         
-        await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error('timeout')), 8000);
-          
-          img.onload = () => {
-            clearTimeout(timeout);
-            divs[i].innerHTML = "";
-            divs[i].appendChild(img);
-            setTimeout(() => img.style.opacity = "1", 50);
-            loaded = true;
-            resolve();
-          };
-          
-          img.onerror = () => {
-            clearTimeout(timeout);
-            reject(new Error('failed'));
-          };
-          
-          img.src = url;
-        });
-        
-        break; // نجح، توقف
-        
-      } catch (error) {
-        console.log(`فشل الرابط ${url}`);
-        continue; // جرب الرابط التالي
+        img.onload = () => {
+          divs[i].innerHTML = "";
+          divs[i].appendChild(img);
+          setTimeout(() => img.style.opacity = "1", 50);
+        };
+      } else {
+        divs[i].innerHTML = '<div style="color:orange;">⏳ السيرفر مشغول، جرب بعد ثواني...</div>';
       }
-    }
-
-    if (!loaded) {
-      divs[i].innerHTML = '<div style="color:red;">❌ فشل التحميل</div>';
+    } catch (error) {
+      divs[i].innerHTML = '<div style="color:red;">❌ خطأ في الاتصال</div>';
     }
     
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 3000)); // 3 ثواني بين كل صورة
   }
 }
 
