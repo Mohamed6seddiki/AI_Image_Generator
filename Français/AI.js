@@ -48,37 +48,71 @@ async function generateImage() {
     prompt = prompt.replace(new RegExp(ar, 'gi'), translations[ar]);
   });
 
-  // استخدام Unsplash للصور الحقيقية (يعمل بدون API key)
-  try {
-    const response = await fetch(
-      `https://source.unsplash.com/random/512x512/?${encodeURIComponent(prompt)}`
-    );
+  const enhancedPrompt = `${prompt}, high quality, detailed`;
+
+  // جرب عدة روابط Pollinations مختلفة
+  const pollinationsURLs = [
+    // الرابط الجديد 2025
+    (p, s) => `https://pollinations.ai/p/${encodeURIComponent(p)}?seed=${s}&width=512&height=512`,
     
-    if (response.ok) {
-      for (let i = 0; i < divs.length; i++) {
+    // الرابط القديم
+    (p, s) => `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?seed=${s}&width=512&height=512&nologo=true`,
+    
+    // بدون معاملات
+    (p, s) => `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}`,
+    
+    // مع model flux
+    (p, s) => `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?model=flux&seed=${s}`
+  ];
+
+  // جرب كل صورة
+  for (let i = 0; i < divs.length; i++) {
+    const seed = Date.now() + i * 2000;
+    let loaded = false;
+
+    // جرب كل رابط بالترتيب
+    for (let urlFunc of pollinationsURLs) {
+      if (loaded) break;
+      
+      const url = urlFunc(enhancedPrompt, seed);
+      
+      try {
         const img = new Image();
         img.style.cssText = "width:100%; opacity:0; transition:opacity 0.5s; border-radius:8px;";
         
-        // إضافة timestamp لجعل كل صورة مختلفة
-        img.src = `https://source.unsplash.com/random/512x512/?${encodeURIComponent(prompt)}&sig=${Date.now() + i}`;
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => reject(new Error('timeout')), 8000);
+          
+          img.onload = () => {
+            clearTimeout(timeout);
+            divs[i].innerHTML = "";
+            divs[i].appendChild(img);
+            setTimeout(() => img.style.opacity = "1", 50);
+            loaded = true;
+            resolve();
+          };
+          
+          img.onerror = () => {
+            clearTimeout(timeout);
+            reject(new Error('failed'));
+          };
+          
+          img.src = url;
+        });
         
-        img.onload = () => {
-          divs[i].innerHTML = "";
-          divs[i].appendChild(img);
-          setTimeout(() => img.style.opacity = "1", 50);
-        };
+        break; // نجح، توقف
         
-        img.onerror = () => {
-          divs[i].innerHTML = '<div style="color:red;">❌ فشل التحميل</div>';
-        };
-        
-        await new Promise(resolve => setTimeout(resolve, 300));
+      } catch (error) {
+        console.log(`فشل الرابط ${url}`);
+        continue; // جرب الرابط التالي
       }
     }
-  } catch (error) {
-    divs.forEach(div => {
-      div.innerHTML = '<div style="color:red;">❌ خطأ في الاتصال</div>';
-    });
+
+    if (!loaded) {
+      divs[i].innerHTML = '<div style="color:red;">❌ فشل التحميل</div>';
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 }
 
