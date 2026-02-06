@@ -1,19 +1,12 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Generate AI</title>
     <title>AI Image Generator</title>
     <link rel="stylesheet" href="AI.css">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Boldonse&family=Bungee+Tint&family=Edu+AU+VIC+WA+NT+Guides:wght@400..700&family=Lilita+One&family=Medula+One&family=Oswald:wght@200..700&family=Reem+Kufi:wght@400..700&family=Rubik:ital,wght@0,300..900;1,300..900&family=Tektur:wght@400..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
-<body>    <div class="stars"></div>
-<div class="shooting-star"></div>
-<div class="shooting-star"></div>
-<div class="shooting-star"></div>
-<div class="shooting-star"></div>
-<div class="shooting-star"></div>
 <body>
     <!-- خلفية النجوم -->
     <div class="stars"></div>
@@ -23,8 +16,6 @@
 
     <!-- العنوان -->
     <div class="shadow-dance-container">
-    <h1  class="shadow-dance-text">MY AI </h1>
-</div>
         <h1 class="shadow-dance-text">MY AI</h1>
     </div>
 
@@ -38,55 +29,9 @@
     <!-- مربع الكتابة + زر التوليد -->
     <div class="prompt">
         <input type="text" placeholder="write your imaginations" id="input">
-        <button class="glow-on-hover"id="BOTONA" onclick="generateImage()">Generate</button>
         <button class="glow-on-hover" id="BOTONA" onclick="generateImage()">Generate</button>
     </div>
 
-    <script>
-        function generateImage() {
-            const prompt = document.getElementById("input").value;
-            const encodedPrompt = encodeURIComponent(prompt);
-            const divs = [document.getElementById("div1"), document.getElementById("div2"), document.getElementById("div3")];
-            divs.forEach((div, index) => {
-                const randomSeed = Math.floor(Math.random() * 10000);
-                const imgUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?seed=${randomSeed}`;
-                const img = new Image();
-                img.src = imgUrl;
-                img.width = 256;
-                img.height = 256;
-                div.innerHTML = '';
-                div.appendChild(img);
-            });
-            if (prompt === "SAMY") {
-                divs.forEach((div, index) => {
-                    const img = new Image();
-                    img.src = `SAMY${index + 1}.jpg`;
-                    img.width = 256;
-                    img.height = 256;
-                    div.innerHTML = '';
-                    div.appendChild(img);
-                });
-            } else if (prompt === "ANIS") {
-                divs.forEach((div, index) => {
-                    const img = new Image();
-                    img.src = `ANIS${index + 1}.jpg`;
-                    img.width = 256;
-                    img.height = 256;
-                    div.innerHTML = '';
-                    div.appendChild(img);
-                });
-            }else if (prompt === "mili") {
-                divs.forEach((div, index) => {
-                    const img = new Image();
-                    img.src = `mili${index + 1}.CR2`;
-                    img.width = 256;
-                    img.height = 256;
-                    div.innerHTML = '';
-                    div.appendChild(img);
-                });
-            }    
-    }
-    </script>
     <script src="AI.js"></script>
 </body>
 </html>
