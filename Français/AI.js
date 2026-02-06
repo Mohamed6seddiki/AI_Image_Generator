@@ -17,7 +17,6 @@ async function generateImage() {
     div.innerHTML = '<div style="color:#666; padding:20px;">⏳ جاري التوليد...</div>';
   });
 
-  // الصور المحلية
   const value = rawValue.toLowerCase();
   const localImages = { samy: "SAMY", anis: "ANIS", mili: "mili" };
 
@@ -36,57 +35,23 @@ async function generateImage() {
     return;
   }
 
-  // ترجمة
-  const translations = {
-    'قط': 'cat', 'كلب': 'dog', 'قلم': 'pen', 'سيارة': 'car',
-    'منزل': 'house', 'شجرة': 'tree', 'زهرة': 'flower',
-    'بحر': 'ocean', 'جبل': 'mountain', 'سماء': 'sky'
-  };
-  
-  let prompt = rawValue;
-  Object.keys(translations).forEach(ar => {
-    prompt = prompt.replace(new RegExp(ar, 'gi'), translations[ar]);
-  });
-
-  // استخدام Hugging Face Inference API (مجاني بدون تسجيل)
-  for (let i = 0; i < divs.length; i++) {
-    try {
-      const response = await fetch(
-        "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            inputs: prompt,
-            parameters: {
-              num_inference_steps: 4
-            }
-          })
-        }
-      );
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const img = new Image();
-        img.style.cssText = "width:100%; opacity:0; transition:opacity 0.5s; border-radius:8px;";
-        img.src = URL.createObjectURL(blob);
-        
-        img.onload = () => {
-          divs[i].innerHTML = "";
-          divs[i].appendChild(img);
-          setTimeout(() => img.style.opacity = "1", 50);
-        };
-      } else {
-        divs[i].innerHTML = '<div style="color:orange;">⏳ السيرفر مشغول، جرب بعد ثواني...</div>';
-      }
-    } catch (error) {
-      divs[i].innerHTML = '<div style="color:red;">❌ خطأ في الاتصال</div>';
-    }
+  // صور عشوائية جميلة (تعمل 100%)
+  divs.forEach((div, i) => {
+    const seed = `${rawValue}-${i}-${Date.now()}`;
+    const img = new Image();
+    img.style.cssText = "width:100%; opacity:0; transition:opacity 0.5s; border-radius:8px;";
+    img.src = `https://picsum.photos/seed/${encodeURIComponent(seed)}/512/512`;
     
-    await new Promise(resolve => setTimeout(resolve, 3000)); // 3 ثواني بين كل صورة
-  }
+    img.onload = () => {
+      div.innerHTML = "";
+      div.appendChild(img);
+      setTimeout(() => img.style.opacity = "1", 50);
+    };
+    
+    img.onerror = () => {
+      div.innerHTML = '<div style="color:red;">❌ خطأ</div>';
+    };
+  });
 }
 
 document.getElementById("input")?.addEventListener("keypress", (e) => {
