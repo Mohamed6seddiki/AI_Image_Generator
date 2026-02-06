@@ -1,111 +1,72 @@
-document.addEventListener('DOMContentLoaded', function () {
-    console.log("Page loaded successfully!");
+// عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
     
-    // ربط الأزرار الرئيسية
+    // زر الذهاب إلى AI
+    document.getElementById('ai-btn').addEventListener('click', function() {
+        window.location.href = 'AI.html';
+    });
+    
+    // زر الذهاب إلى محرر الصور
+    document.getElementById('img-btn').addEventListener('click', function() {
+        window.location.href = 'IMGEditor.html';
+    });
+    
+    // زر التواصل
+    document.getElementById('contact-btn').addEventListener('click', function() {
+        // إخفاء زر التواصل
+        this.style.display = 'none';
+        
+        // إظهار الروابط الاجتماعية
+        document.getElementById('social-links').style.display = 'flex';
+        
+        // إظهار زر الرجوع
+        document.getElementById('back-btn').style.display = 'block';
+    });
+    
+    // زر الرجوع
+    document.getElementById('back-btn').addEventListener('click', function() {
+        // إخفاء زر الرجوع
+        this.style.display = 'none';
+        
+        // إخفاء الروابط الاجتماعية
+        document.getElementById('social-links').style.display = 'none';
+        
+        // إظهار زر التواصل
+        document.getElementById('contact-btn').style.display = 'block';
+    });
+    
+    // تأثيرات المرور على الأزرار الرئيسية
     const aiBtn = document.getElementById('ai-btn');
     const imgBtn = document.getElementById('img-btn');
     
-    if (aiBtn) {
-        aiBtn.addEventListener('click', function () {
-            console.log("AI button clicked");
-            window.location.href = 'AI.html';
-        });
-    }
+    aiBtn.addEventListener('mouseover', function() {
+        showImage('left');
+    });
     
-    if (imgBtn) {
-        imgBtn.addEventListener('click', function () {
-            console.log("Image Editor button clicked");
-            window.location.href = 'IMGEditor.html';
-        });
-    }
+    aiBtn.addEventListener('mouseout', function() {
+        hideImage('left');
+    });
     
-    // إدارة قسم التواصل
-    const contactBtn = document.getElementById("contact-btn");
-    const socialLinks = document.getElementById("social-links");
-    const backBtn = document.getElementById("back-btn");
+    imgBtn.addEventListener('mouseover', function() {
+        showImage('right');
+    });
     
-    console.log("Contact button:", contactBtn);
-    console.log("Social links:", socialLinks);
-    console.log("Back button:", backBtn);
-    
-    if (contactBtn && socialLinks && backBtn) {
-        // إخفاء الروابط الاجتماعية في البداية
-        socialLinks.classList.remove('visible');
-        backBtn.classList.remove('visible');
-        
-        // حدث الضغط على زر التواصل
-        contactBtn.addEventListener("click", function (e) {
-            e.preventDefault();
-            console.log("Contact button clicked!");
-            
-            // إخفاء زر التواصل
-            contactBtn.classList.add('hidden');
-            
-            // إظهار الروابط الاجتماعية
-            socialLinks.classList.add('visible');
-            
-            // إظهار زر الرجوع
-            backBtn.classList.add('visible');
-            
-            // تحريك الشاشة لأسفل
-            setTimeout(() => {
-                socialLinks.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
-            }, 300);
-        });
-        
-        // حدث الضغط على زر الرجوع
-        backBtn.addEventListener("click", function (e) {
-            e.preventDefault();
-            console.log("Back button clicked!");
-            
-            // إخفاء الروابط الاجتماعية
-            socialLinks.classList.remove('visible');
-            
-            // إخفاء زر الرجوع
-            backBtn.classList.remove('visible');
-            
-            // إظهار زر التواصل
-            contactBtn.classList.remove('hidden');
-            
-            // العودة للأعلى
-            window.scrollTo({ 
-                top: 0, 
-                behavior: 'smooth' 
-            });
-        });
-    } else {
-        console.error("One or more elements not found!");
-    }
+    imgBtn.addEventListener('mouseout', function() {
+        hideImage('right');
+    });
 });
 
-// وظائف عرض/إخفاء الصور الخلفية
+// وظائف عرض وإخفاء الصور
 function showImage(side) {
-    const element = document.querySelector(`.${side}`);
+    const element = document.querySelector('.' + side);
     if (element) {
-        element.classList.add('visible');
+        element.classList.add('active');
     }
 }
 
 function hideImage(side) {
-    const element = document.querySelector(`.${side}`);
+    const element = document.querySelector('.' + side);
     if (element) {
-        element.classList.remove('visible');
+        element.classList.remove('active');
     }
 }
-
-// إضافة تأثير عند التمرير
-window.addEventListener('scroll', function() {
-    const dwayra = document.querySelector('.DWAYRA');
-    if (dwayra) {
-        const scrollPosition = window.scrollY;
-        
-        if (scrollPosition > 100) {
-            dwayra.style.opacity = '0.7';
-        } else {
-            dwayra.style.opacity = '1';
-        }
-    }
-});
