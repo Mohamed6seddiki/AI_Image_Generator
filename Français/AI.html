@@ -1,37 +1,241 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>AI Image Generator</title>
-    <link rel="stylesheet" href="AI.css">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد الصور بالذكاء الاصطناعي</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 18px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            outline: none;
+        }
+        button {
+            padding: 15px 40px;
+            font-size: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { transform: scale(1.05); transition: 0.2s; }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .image-box {
+            background: #f5f5f5;
+            border-radius: 15px;
+            overflow: hidden;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
-    <!-- خلفية النجوم -->
-    <div class="stars"></div>
-    <div class="shooting-star"></div>
-    <div class="shooting-star"></div>
-    <div class="shooting-star"></div>
+    <div class="container">
+        <h1>🎨 مولد الصور</h1>
+        
+        <div class="search-box">
+            <input 
+                type="text" 
+                id="input" 
+                placeholder="اكتب وصف الصورة..."
+            >
+            <button onclick="generateImage()">توليد</button>
+        </div>
 
-    <!-- العنوان -->
-    <div class="shadow-dance-container">
-        <h1 class="shadow-dance-text">MY AI</h1>
+        <div class="gallery">
+            <div class="image-box" id="div1"></div>
+            <div class="image-box" id="div2"></div>
+            <div class="image-box" id="div3"></div>
+        </div>
     </div>
 
-    <!-- صور -->
-    <div class="IMGs" id="IMGs">
-        <div id="div1"></div>
-        <div id="div2"></div>
-        <div id="div3"></div>
-    </div>
+    <script>
+        async function generateImage() {
+          const input = document.getElementById("input");
+          let rawValue = input.value.trim();
+          
+          if (!rawValue) {
+            alert("⚠️ اكتب وصف الصورة");
+            return;
+          }
 
-    <!-- مربع الكتابة + زر التوليد -->
-    <div class="prompt">
-        <input type="text" placeholder="write your imaginations" id="input">
-        <button class="glow-on-hover" id="BOTONA" onclick="generateImage()">Generate</button>
-    </div>
+          const divs = [
+            document.getElementById("div1"),
+            document.getElementById("div2"),
+            document.getElementById("div3")
+          ];
 
-    <script src="AI.js"></script>
+          divs.forEach(div => {
+            div.innerHTML = '<div style="color:#666; padding:20px;">⏳ جاري التوليد...</div>';
+          });
+
+          // الصور المحلية
+          const value = rawValue.toLowerCase();
+          const localImages = { samy: "SAMY", anis: "ANIS", mili: "mili" };
+
+          if (localImages[value]) {
+            divs.forEach((div, i) => {
+              const img = new Image();
+              img.style.opacity = "0";
+              img.style.transition = "opacity 0.5s";
+              img.src = `${localImages[value]}${i + 1}.jpg`;
+              img.onload = () => {
+                div.innerHTML = "";
+                div.appendChild(img);
+                setTimeout(() => img.style.opacity = "1", 10);
+              };
+              img.onerror = () => div.innerHTML = "❌ غير موجودة";
+            });
+            return;
+          }
+
+          // ترجمة تلقائية
+          const translations = {
+            'قط': 'cat', 'كلب': 'dog', 'قلم': 'pen', 'سيارة': 'car',
+            'منزل': 'house', 'شجرة': 'tree', 'زهرة': 'flower',
+            'بحر': 'ocean', 'جبل': 'mountain', 'سماء': 'sky'
+          };
+          
+          let prompt = rawValue;
+          Object.keys(translations).forEach(ar => {
+            prompt = prompt.replace(new RegExp(ar, 'gi'), translations[ar]);
+          });
+
+          // قائمة APIs احتياطية
+          const apis = [
+            // API 1: Pollinations الجديد
+            (p, s) => `https://pollinations.ai/p/${encodeURIComponent(p)}?seed=${s}&width=512&height=512`,
+            
+            // API 2: Pollinations القديم
+            (p, s) => `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?seed=${s}&width=512&height=512&nologo=true`,
+            
+            // API 3: Lexica Art
+            (p, s) => `https://lexica.art/api/v1/search?q=${encodeURIComponent(p)}`,
+            
+            // API 4: Placeholder
+            (p, s) => `https://via.placeholder.com/512/4A90E2/ffffff?text=${encodeURIComponent(p.substring(0, 20))}`
+          ];
+
+          // توليد الصور بالتجربة التدريجية
+          for (let i = 0; i < divs.length; i++) {
+            const seed = Date.now() + i * 1000;
+            let loaded = false;
+
+            // جرب كل API بالترتيب حتى ينجح واحد
+            for (let apiIndex = 0; apiIndex < apis.length && !loaded; apiIndex++) {
+              try {
+                const url = apis[apiIndex](prompt, seed);
+                console.log(`محاولة API ${apiIndex + 1} للصورة ${i + 1}: ${url}`);
+
+                // حالة خاصة لـ Lexica (يعيد JSON)
+                if (apiIndex === 2) {
+                  const response = await fetch(url);
+                  const data = await response.json();
+                  if (data.images && data.images.length > 0) {
+                    const imgUrl = data.images[Math.floor(Math.random() * Math.min(5, data.images.length))].src;
+                    await loadImage(divs[i], imgUrl);
+                    loaded = true;
+                  }
+                } else {
+                  // APIs العادية
+                  await loadImage(divs[i], url);
+                  loaded = true;
+                }
+                
+                if (loaded) {
+                  console.log(`✅ نجح API ${apiIndex + 1} للصورة ${i + 1}`);
+                  break;
+                }
+              } catch (error) {
+                console.log(`❌ فشل API ${apiIndex + 1}:`, error.message);
+                continue;
+              }
+            }
+
+            // إذا فشلت كل APIs
+            if (!loaded) {
+              divs[i].innerHTML = '<div style="color:red; padding:20px; text-align:center;">❌ فشل التحميل<br><small>جرب مرة أخرى</small></div>';
+            }
+
+            // تأخير بين الصور
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
+
+        // دالة مساعدة لتحميل الصورة
+        function loadImage(container, url) {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.style.opacity = "0";
+            img.style.transition = "opacity 0.5s";
+            img.crossOrigin = "anonymous";
+            
+            const timeout = setTimeout(() => {
+              reject(new Error('Timeout'));
+            }, 10000); // 10 ثواني timeout
+
+            img.onload = () => {
+              clearTimeout(timeout);
+              container.innerHTML = "";
+              container.appendChild(img);
+              setTimeout(() => img.style.opacity = "1", 50);
+              resolve();
+            };
+            
+            img.onerror = () => {
+              clearTimeout(timeout);
+              reject(new Error('Image load failed'));
+            };
+            
+            img.src = url;
+          });
+        }
+
+        document.getElementById("input")?.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") generateImage();
+        });
+    </script>
 </body>
 </html>
